@@ -1,5 +1,6 @@
 import secrets
 from cryptography.hazmat.primitives.kdf.argon2 import Argon2id
+from cryptography.fernet import Fernet
 
 
 def generate_salt():
@@ -29,3 +30,25 @@ def derive_key(password: str, salt: str) -> bytes:
     key = kdf.derive(password.encode())
 
     return key
+
+
+def encrypt_data(data: str, key: bytes):
+    """
+    Function to encrypt the incoming data using a Derived key
+    """
+    cipher = Fernet(key)
+
+    encrypted_msg = cipher.encrypt(data.encode())
+
+    return encrypted_msg
+
+
+def decrypt_data(token: bytes, key: bytes):
+    """
+    Function to decrypt data using a token
+    """
+    cipher = Fernet(key)
+
+    decrypted_msg = cipher.decrypt(token)
+
+    return decrypted_msg.decode()
