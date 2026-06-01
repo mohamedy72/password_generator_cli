@@ -17,6 +17,9 @@ def generate_salt():
 
 
 def derive_key(password: str, salt: str) -> bytes:
+    """
+    A function to derive a key from a master password, then use it to encrypt / decrypt data
+    """
     kdf = Argon2id(
         salt=bytes.fromhex(salt),
         length=32,
@@ -38,6 +41,7 @@ def encrypt_data(data: str, key: bytes):
     """
     cipher = Fernet(key)
 
+    # This returns a token not raw encrypted bytes
     encrypted_msg = cipher.encrypt(data.encode())
 
     return encrypted_msg
@@ -52,3 +56,15 @@ def decrypt_data(token: bytes, key: bytes):
     decrypted_msg = cipher.decrypt(token)
 
     return decrypted_msg.decode()
+
+
+def verify_master_password(token, key):
+    cipher = Fernet(key)
+    try:
+        # comment:
+        decrypted_msg = cipher.decrypt(token)
+        if decrypted_msg == b"verified":
+            return True
+    except Exception as _:
+        return False
+    # end try
