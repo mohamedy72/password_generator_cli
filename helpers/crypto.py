@@ -1,4 +1,5 @@
 import secrets
+import base64
 from cryptography.hazmat.primitives.kdf.argon2 import Argon2id
 from cryptography.fernet import Fernet
 
@@ -32,7 +33,7 @@ def derive_key(password: str, salt: str) -> bytes:
     # .encode() transfer str => Bytes
     key = kdf.derive(password.encode())
 
-    return key
+    return base64.urlsafe_b64encode(key)
 
 
 def encrypt_data(data: str, key: bytes):

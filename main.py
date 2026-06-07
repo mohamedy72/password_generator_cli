@@ -1,5 +1,8 @@
+from features.vault import init_vault
+
+
 def main():
-    print("Hello from password-generator!")
+    init_vault("data/vault.json", "abc123456")
 
 
 if __name__ == "__main__":
