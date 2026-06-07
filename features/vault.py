@@ -1,10 +1,12 @@
 from pathlib import Path
-import json
 from helpers import (
     generate_salt,
     derive_key,
     encrypt_data,
     save_vault,
+    load_vault,
+    verify_master_password,
+    decrypt_data,
 )
 
 
@@ -28,3 +30,27 @@ def init_vault(filename: str, password: str) -> None:
 
     # 6. Serialize to JSON → save to disk
     save_vault(pa, vault_structure)
+
+
+def unlock_vault(filename: str, password: str) -> dict:
+    pa = Path(filename).absolute()
+
+    if not pa.exists():
+        raise FileNotFoundError(
+            "Specified file don't exist. Either check spelling or run --init-vault "
+        )
+    # 1. Load JSON file → parse it
+    data = load_vault(pa)
+
+    # 2. Read salt from plain text field
+    salt = data["salt"]
+
+    # 3. Derive key from password + salt
+    key = derive_key(password, salt)
+
+    # 4. Decrypt verification token → verify password
+    if verify_master_password(data["verification_token"].encode(), key):
+        # TODO: Handle decryption if entries has data
+        return data
+    else:
+        raise ValueError("Password verification failed")
