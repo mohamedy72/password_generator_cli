@@ -7,6 +7,3 @@ def generate_password(length: int) -> str:
     password = "".join(secrets.choice(combination) for i in range(length))
 
     return password
-
-
-generate_password(21)
