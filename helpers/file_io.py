@@ -27,8 +27,8 @@ def load_vault(path: str) -> bytes:
     return data
 
 
-def save_vault(path: str, data: bytes) -> None:
+def save_vault(path: str, data: dict) -> None:
     pa = Path(path).absolute()
 
-    with open(pa, "wb") as f:
-        f.write(data)
+    with open(pa, "w") as f:
+        json.dump(data, f, indent=4)
